@@ -83,8 +83,6 @@ void SecINC_Order1(uint32_t *z, const uint32_t *x, const uint32_t *one) {
     uint32_t g0 = x[0];
     uint32_t g1 = x[1];
     
-	uint32_t r = rand_uint32(); 
-
     for(int j = 1; j <= W; ++j) {
         uint32_t pw = 1 << (j - 1);
         uint32_t high = 0xFFFFFFFF << pw;
@@ -92,6 +90,8 @@ void SecINC_Order1(uint32_t *z, const uint32_t *x, const uint32_t *one) {
 
         uint32_t a0 = g0 << pw;
         uint32_t a1 = g1 << pw;
+  
+      	uint32_t r = rand_uint32(); 
         
         uint32_t a_prm0 = SecAND_Order1(a0, g0, a1, g1, r);
         uint32_t a_prm1 = r;
