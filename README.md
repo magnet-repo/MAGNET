@@ -26,7 +26,7 @@ By default, **MAGNET** is used as the discrete Gaussian sampler. The active samp
 
 ## ARM Cortex-M4 Implementation
 
-MAGNET ARM Cortex-M4 (Thumb-2 ASM) implementation can be found in _MAGNET_m4_ folder. The step for running the implementation using **nrfutil** is given in the README under this folder.
+MAGNET ARM Cortex-M4 (Thumb-2 ASM) implementation can be found in _MAGNET_m4_ folder. The procedure for running the implementation using **nrfutil** is described in the README under this folder.
 
 ## Test Vector Leakage Assessment
 
