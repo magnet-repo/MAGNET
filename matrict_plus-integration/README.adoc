@@ -1,0 +1,13 @@
+= MatRiCT+
+
+This is the implementation source code for the paper:
+
+Muhammed F. Esgin, Ron Steinfeld, & Raymond K. Zhao. (2022). MatRiCT+: More Efficient Post-Quantum Private Blockchain Payments. IEEE S&P 2022. DOI https://doi.org/10.1109/SP46214.2022.9833655[10.1109/SP46214.2022.9833655]. https://ia.cr/2021/545[Preprint].
+
+The folder `n10`  is the implementation for anonymity level 1/10.
+
+In order to compile the source code, you need the https://github.com/XKCP/XKCP[XKCP] i.e., Keccak library.
+
+1. Run `make` to compile the source code.
+
+2. Run `./ringct` to start the benchmark. The first 3 values are the runtime (in CPU cycles) of SamMat, Spend, and Verify, respectively. The last value is the correctness ("1" means the transaction can pass the verification, and "0" otherwise). The transaction generation time in the paper is the sum of SamMat and Spend. 
