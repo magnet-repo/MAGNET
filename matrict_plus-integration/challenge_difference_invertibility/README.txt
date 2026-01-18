@@ -1,0 +1,2 @@
+1. First run 'Sprecmp_q32_gen_n.sage' with a certain choice of q to create the table
+2. Then, run 'Postcmp_gen_q32_n.sage' with a certain choice of w (and the same q in Step 1) to compute the non-invertibility probability
