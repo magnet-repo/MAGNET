@@ -1,5 +1,7 @@
 # MAGNET: MAsked Gaussian Now Efficient and Table-less 
 
+-- C Implementations --
+
 **MAGNET** can be compiled and executed with:
 
 ``make && ./MAGNET``
@@ -12,8 +14,14 @@ To see the runtime of **GR19-DGS**, under the GR19 folder, execute:
 
 ``make && ./GR19-DGS``
 
+-- MatRiCT+ Integration --
+
 The integration of **MAGNET** and **GR19-DGS** into the MatRiCT+ payment protocol can be found in the _matrict_plus-integration_ folder. To run the implementation, navigate to the _n10_ folder and execute:
 
 ``make && ./ringct``
 
 By default, **MAGNET** is used as the discrete Gaussian sampler. The active sampler can be changed by modifying the corresponding #define directive in the _n10/param.h_ file.
+
+-- ARM Cortex-M4 Implementation --
+
+MAGNET ARM Cortex-M4 (Thumb-2 ASM) implementation can be found in _MAGNET_m4_ folder. The step for running the implementation using **nrfutil** is given in the README under this folder.
