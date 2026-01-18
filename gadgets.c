@@ -79,34 +79,7 @@ void SecOR(uint32_t* z, const uint32_t* x, const uint32_t* y) { // [CC24]
 	for(int i = 1; i < NUM_SHARES; ++i) z[i] = t3[i];
 }
 
-void SecINC_Order1(uint32_t *z, const uint32_t *x, const uint32_t *one) {
-    uint32_t g0 = x[0];
-    uint32_t g1 = x[1];
-    
-    for(int j = 1; j <= W; ++j) {
-        uint32_t pw = 1 << (j - 1);
-        uint32_t high = 0xFFFFFFFF << pw;
-        uint32_t low  = ~high;
-
-        uint32_t a0 = g0 << pw;
-        uint32_t a1 = g1 << pw;
-  
-      	uint32_t r = rand_uint32(); 
-        
-        uint32_t a_prm0 = SecAND_Order1(a0, g0, a1, g1, r);
-        uint32_t a_prm1 = r;
-        
-        g0 = (a_prm0 & high) ^ (g0 & low);
-        g1 = (a_prm1 & high) ^ (g1 & low); 
-    }
-    z[0] = x[0] ^ one[0] ^ (g0 << 1);
-    z[1] = x[1] ^ one[1] ^ (g1 << 1);
-}
-
 void SecINC(uint32_t *z, const uint32_t *x, const uint32_t *one) {
-	#if MASK_ORDER == 1
-		SecINC_Order1(z, x, one);
-	#else
 	    uint32_t g[NUM_SHARES] = {0}, a[NUM_SHARES] = {0}, a_prm[NUM_SHARES] = {0};
         for(int i = 0; i < NUM_SHARES; ++i) g[i] = x[i];
 
@@ -122,63 +95,9 @@ void SecINC(uint32_t *z, const uint32_t *x, const uint32_t *one) {
             Refresh(g);
         }
         for(int i = 0; i < NUM_SHARES; ++i) z[i] = x[i] ^ one[i] ^ (g[i] << 1);
-    #endif
-}
-
-
-static uint32_t SecXOR_Order1(uint32_t x, uint32_t y, uint32_t u) { // [CGVT15]
-	return x ^ y ^ u;
-}
-
-static uint32_t SecSHIFT_Order1(uint32_t x, uint32_t s, uint32_t t, uint32_t j) { // [CGVT15]
-	uint32_t y;
-	y = t ^ (x << j);
-	y = y ^ (s << j);
-	return y;
-}
-uint32_t SecAND_Order1(uint32_t x, uint32_t y, uint32_t s, uint32_t t, uint32_t u) { // [CGVT15]
-	uint32_t z;
-	z = u ^ (x & y);
-	z = z ^ (x & t);
-	z = z ^ (s & y);
-	z = z ^ (s & t);
-	return z;
-}
-
-void SecADD_Order1(uint32_t* z, const uint32_t* x, const uint32_t* y) {  // [CGVT15]
-	int t, u, x_p, y_p, z_p, r, s, P, G, H, U;
-	x_p = x[0]; s = x[1];
-	y_p = y[0]; r = y[1];
-	t = rand_uint32(); u = rand_uint32();
-
-	P = SecXOR_Order1(x_p, y_p, r);
-	G = SecAND_Order1(x_p, y_p, s, r, u);
-	G = G ^ s;
-	G = G ^ u;
-	for(int i = 1; i <= W-1; ++i){
-		H = SecSHIFT_Order1(G, s, t, 1<<(i-1));
-		U = SecAND_Order1(P,H,s,t,u);
-		G = SecXOR_Order1(G, U, u);
-		H = SecSHIFT_Order1(P, s, t, 1<<(i-1));
-		P = SecAND_Order1(P, H, s, t, u);
-		P = P ^ s;
-		P = P ^ u;
-	}
-
-	H = SecSHIFT_Order1(G,s,t, (1<<(W-1)));
-	U = SecAND_Order1(P,H,s,t,u);
-	G = SecXOR_Order1(G, U, u);
-	z_p = SecXOR_Order1(y_p, x_p, s);
-	z_p = z_p ^ (2*G);
-	z_p = z_p ^ (2*s);
-	z[0] = z_p;
-	z[1] = r;
 }
 
 void SecADD(uint32_t* z, const uint32_t* x, const uint32_t* y) { // [BBE+18]
-	#if MASK_ORDER == 1
-		SecADD_Order1(z, x, y);
-	#else
 		uint32_t p[NUM_SHARES] = {0}, p_[NUM_SHARES] = {0}, g[NUM_SHARES] = {0}, a[NUM_SHARES] = {0}, a_[NUM_SHARES] = {0}, ap[NUM_SHARES] = {0};
 		for(int i = 0; i < NUM_SHARES; ++i) p[i] = x[i] ^ y[i];
 		SecAND(g, x, y);
@@ -202,7 +121,6 @@ void SecADD(uint32_t* z, const uint32_t* x, const uint32_t* y) { // [BBE+18]
 		for(int i = 0; i < NUM_SHARES; ++i) g[i] ^= a_[i];
 
 		for(int i = 0; i < NUM_SHARES; ++i) z[i] = x[i] ^ y[i] ^ (g[i] << 1);
-	#endif
 }
 
 void SecSQU(uint32_t* C, const uint32_t* A) {
