@@ -10,137 +10,117 @@
 @ -----------------------------------------------------------------------------
 SecSQU_m4:
     PUSH    {r4-r10, lr}
-    SUB     sp, sp, #8          @ Stack for dummy writes
 
-    @ ---------------------------------------------------------
-    @ 1. PREPARE BLINDING FACTOR
-    @ ---------------------------------------------------------
-    @ We need two random values: 
-    @   r7 = r (for output masking)
-    @   r9 = rho (for input blinding)
     LDR     r7, [r2]            @ Load r (pool[0])
     LDR     r9, [r2, #4]        @ Load rho (pool[1])
-    LDR     r10, [r2, #8]        @ t
+    LDR     r10, [r2, #8]       @ t
     
-    @ ---------------------------------------------------------
-    @ 2. LOAD & BLIND INPUTS
-    @ ---------------------------------------------------------
-    @ FIX: Randomize shares BEFORE they meet in the ALU.
-    @ Prevents HD(A0, A1) leakage which reveals the secret.
-
     LDR     r3, [r1]            @ Load A[0]
     SUB     r3, r3, r9          @ A[0]' = A[0] - rho
 
-    @ [HARDENING] Scrub Read Bus (Transition A[0] -> A[1])
     LDR     r12, [r2]           @ Dummy Load
     EOR     r12, r12, r12       @ Clear reg
     
     LDR     r4, [r1, #4]        @ Load A[1]
     ADD     r4, r4, r9          @ A[1]' = A[1] + rho
 
-    @ Now r3 and r4 are freshly randomized. 
-    @ HD(r3, r4) is random and does not leak the secret.
-
-    
+    NOP
     EOR     r12, r12, r12       @ Clear history
-    
+    NOP
     MUL     r12, r7, r7         @ Scratch = r * r
-    
-    @ ---------------------------------------------------------
-    @ 3. COMPUTE SQUARES
-    @ ---------------------------------------------------------
+    NOP
+
     MUL     r5, r3, r3          @ r5 = (A[0]')^2
     
-    
+    NOP
     EOR     r12, r12, r12       @ Clear history
-    
+    NOP
     MUL     r12, r7, r7         @ Scratch = r * r
-    
+    NOP
 
     MUL     r6, r4, r4          @ r6 = (A[1]')^2
 
-    @ ---------------------------------------------------------
-    @ 4. COMPUTE CROSS TERMS
-    @ ---------------------------------------------------------
-    @ [HARDENING] Dummy Multiplication to pre-charge ALU
-    
+    NOP
     EOR     r12, r12, r12       @ Clear history
-    
+    NOP
     MUL     r12, r7, r7         @ Scratch = r * r
-    
-    
-    @ Compute Cross Term: 2 * A[0]' * A[1]'
+    NOP
     
     ADD     r11, r3, r10            @ u  = r3 + t
 
-    
+    NOP
     EOR     r12, r12, r12       @ Clear history
+    NOP
+    MUL     r12, r7, r7         @ Dummy MUL to pre-charge ALU
+    NOP
 
-    MUL     r8,  r11, r4            @ m1 = u * r4
-   
-    
+    MUL     r8,  r11, r4        @ m1 = u * r4         
+
+    NOP
+    NOP
     EOR     r12, r12, r12       @ Clear history
+    NOP
+    MUL     r12, r7, r7         @ Dummy MUL to pre-charge ALU
+    NOP
+    NOP
     
-    
-    MUL     r12, r10, r4            @ m2 = t * r4 
+    MUL     r12, r10, r4        @ m2 = t * r4
 
-    
+    NOP
+    NOP
     EOR     r9, r9, r9          @ Clear history
+    NOP
+    MUL     r9, r7, r7          @ Dummy MUL to pre-charge ALU
+    NOP
+    NOP
 
-    SUB     r8,  r8,  r12           @ r8 = r3 * r4
+    SUB     r8,  r8,  r12       @ r8 = r3 * r4
 
-    @MUL     r8, r3, r4          @ r8 = A[0]' * A[1]'
-
-    
+    NOP
     EOR     r12, r12, r12       @ Clear history
-    
+    NOP
     MUL     r12, r7, r7         @ Scratch = r * r
-    
+    NOP
 
     LSL     r8, r8, #1          @ r8 = 2 * A[0]' * A[1]'
 
-    
+    NOP
     EOR     r12, r12, r12       @ Clear history
-    
+    NOP
     MUL     r12, r7, r7         @ Scratch = r * r
-    
+    NOP
 
-    @ Apply Output Mask
     ADD     r8, r7, r8          @ r8 = r + 2*A[0]'*A[1]'
 
-    
+    NOP
     EOR     r12, r12, r12       @ Clear history
-    
+    NOP
     MUL     r12, r7, r7         @ Scratch = r * r
-    
+    NOP
 
-    @ ---------------------------------------------------------
-    @ 5. UPDATE SHARES
-    @ ---------------------------------------------------------
     SUB     r5, r5, r7          @ C[0] = (A[0]')^2 - r
     
-    
+    NOP
     EOR     r12, r12, r12       @ Clear history
-    
+    NOP
     MUL     r12, r7, r7         @ Scratch = r * r
-    
+    NOP
 
     ADD     r6, r6, r8          @ C[1] = (A[1]')^2 + 2*A[0]'*A[1]' + r
 
-    
+    NOP
     EOR     r9, r9, r9          @ Clear history
 
-    @ ---------------------------------------------------------
-    @ 6. STORE RESULTS (HARDENED)
-    @ ---------------------------------------------------------
-    STR     r5, [r0]            @ Store C[0]
-
-    @ [HARDENING] Scrub Write Bus (Transition C[0] -> C[1])
     LDR     r12, [r2]           @ Load Random
-    STR     r12, [sp]           @ Dummy Store to Stack
 
+    STR     r5, [r0]            @ Store C[0]
+    NOP
+
+    LDR     r12, [r2]           @ Load Random
+    
+    NOP
     STR     r6, [r0, #4]        @ Store C[1]
 
-    @ Cleanup
-    ADD     sp, sp, #8
+    LDR     r12, [r2]           @ Load Random
+
     POP     {r4-r10, pc}
