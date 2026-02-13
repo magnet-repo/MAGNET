@@ -63,9 +63,14 @@ SecAND_m4:
     NOP
     STR     rz0, [pz], #4
     NOP
+
     STR     px,  [pool]
     NOP
     STR     rz1, [pz], #4
+
+    NOP
+    LDR     r,   [pool]
+    NOP
           
     @ ---- Clean up register aliases ----
     .unreq  pz

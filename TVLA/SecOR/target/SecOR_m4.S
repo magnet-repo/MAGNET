@@ -37,9 +37,7 @@ SecOR_m4:
 
     @ SCRUB STACK WRITE BUS
     LDR     r12, [r7]           @ Load Random
-    DSB
     STR     r12, [r8, #24]      @ Scrub Stack address (sp+24)
-    DSB
 
     LDR     r12, [r7]
 
@@ -61,9 +59,7 @@ SecOR_m4:
 
     @ SCRUB STACK WRITE BUS
     LDR     r12, [r7]           @ Load Random
-    DSB
     STR     r12, [r8, #24]      @ Scrub Stack address (sp+24)
-    DSB
 
     LDR     r12, [r7]
 
@@ -88,11 +84,7 @@ SecOR_m4:
 
     LDR     r12, [r7]
 
-    DSB
-    ISB
     BL      SecAND_m4
-    DSB
-    ISB
     
     @ -------------------------------------------------------------------------
     @ 4. FINALIZE (z = ~t3)
@@ -106,9 +98,7 @@ SecOR_m4:
 
     @ SCRUB OUTPUT WRITE BUS
     LDR     r12, [r7]           @ Load Random
-    DSB
     STR     r12, [r4]           @ Scrub Target Address (r4) directly
-    DSB
 
     @ --- Process Share 0 ---
     EOR     r0, r0, r0
@@ -120,9 +110,7 @@ SecOR_m4:
  
     MVN     r0, r0              @ ~t3[0]
 
-    DSB
     STR     r12, [r4]           @ Scrub Target Address (r4) directly
-    DSB
 
     LDR     r12, [r7]
 
