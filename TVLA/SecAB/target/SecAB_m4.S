@@ -32,9 +32,6 @@ SecAB_m4:
     AND     O, G, rx1           @ O = G & x1
     EOR     O, O, G             @ O = (G & x1) ^ G = G & (~x1)
 
-    NOP
-    NOP
-
     EOR     ry0, T, rx0
     AND     t2, T, rx0
     EOR     G, G, ry0
@@ -50,30 +47,41 @@ SecAB_m4:
     EOR     O, O, G
 
     NOP
-    EOR     t1, t1, t1    
+    EOR     t1, t1, t1        
     
     EOR     O, O, t2
 
     NOP
     EOR     t2, t2, t2
 
-    .rept 31
-        NOP
-        EOR     t2, t2, t2    
-        
-        NOP
-        EOR     t3, t3, t3
+    NOP
+    LDR     t1, [pool], #4
+    EOR     t3, t3, t3        
     
-        AND     G, T, rx1
+    NOP
 
-        EOR     G, G, O
-        AND     T, T, rx0
-        EOR     G, G, T
+    .rept 31
+       EOR     t3, t3, t3      
         
+        BIC     t1, T, rx1      
+        EOR     t1, t1, T       
+
         NOP
-        EOR     t1, t1, t1        
+        EOR     t3, t3, t3          
         
-        LSL     T, G, #1
+        EOR     t1, t1, O       
+
+        AND     T, T, rx0
+
+        NOP
+        EOR     t3, t3, t3          
+
+        EOR     t1, t1, T       
+
+        NOP
+        EOR     t3, t3, t3          
+        
+        LSL     T, t1, #1
     .endr
 
     NOP
@@ -100,8 +108,8 @@ SecAB_m4:
     .unreq ry0 
     .unreq ry1  
     .unreq G    
-    .unreq O   
-    .unreq t1  
+    .unreq O    
+    .unreq t1   
     .unreq t2
     .unreq t3
 
